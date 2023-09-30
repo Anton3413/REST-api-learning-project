@@ -2,6 +2,7 @@ package com.spring.example.rest.service;
 
 import com.spring.example.rest.model.Employee;
 import com.spring.example.rest.repository.EmployeeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +29,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public Employee getEmployeeById(int id) {
-        return employeeRepository.getEmployeeById(id);
+
+        return employeeRepository.getEmployeeById(id)
+                .orElseThrow(
+                () ->new EntityNotFoundException("There is no Employee with id = " + id));
     }
 
     @Override

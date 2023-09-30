@@ -1,12 +1,13 @@
 package com.spring.example.rest.repository;
 
 import com.spring.example.rest.model.Employee;
-import org.hibernate.Session;
+import jakarta.persistence.EntityNotFoundException;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class EmployeeRepositoryImpl implements EmployeeRepository{
@@ -16,23 +17,23 @@ public class EmployeeRepositoryImpl implements EmployeeRepository{
 
     public List<Employee> getAllEmployees() {
        Query<Employee> query = factory.getCurrentSession().createQuery("from Employee ", Employee.class);
-       List<Employee> employees = query.getResultList();
-       return employees;
+       return query.getResultList();
     }
 
     public void saveEmployee(Employee employee) {
         factory.getCurrentSession().saveOrUpdate(employee);
     }
 
-   public Employee getEmployeeById(int id) {
-        Employee employee = factory.getCurrentSession().get(Employee.class,id);
-        System.out.println(employee.getId());
-        return  employee;
+   public Optional<Employee> getEmployeeById(int id) {
+      Optional<Employee> employee =  Optional.ofNullable(factory.getCurrentSession().get(Employee.class,id));
+      return employee;
     }
 
     public void deleteEmployeeById(int id) {
-        Session session = factory.getCurrentSession();
-        Employee employee = session.get(Employee.class,id);
-        session.remove(employee);
+        Optional<Employee>  employee = getEmployeeById(id);
+            factory.getCurrentSession().
+            remove(employee.orElseThrow(
+            ()->  new EntityNotFoundException("Its impossible to delete an employee with ID = "+ id)));
+
     }
 }
