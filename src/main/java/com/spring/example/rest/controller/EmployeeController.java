@@ -30,4 +30,14 @@ public class EmployeeController {
         employeeService.saveEmployee(employee);
         return employee;
     }
+    @PutMapping("/employees")
+    public Employee updateEmployee(@RequestBody Employee employee){
+        employeeService.saveEmployee(employee);
+        return employee;
+    }
+    @DeleteMapping("/employees/{id}")
+    public String removeEmployee(@PathVariable int id){
+        employeeService.deleteEmployeeById(id);
+        return "Employee with id "+ id + " was successfully deleted";
+    }
 }
